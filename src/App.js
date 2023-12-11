@@ -17,6 +17,18 @@ const App = () => {
     return isInside;
   }
 
+  function areElementsIntersecting(element1, element2) {
+    const rect1 = element1.getBoundingClientRect();
+    const rect2 = element2.getBoundingClientRect();
+
+    return !(
+      rect1.right < rect2.left ||
+      rect1.left > rect2.right ||
+      rect1.bottom < rect2.top ||
+      rect1.top > rect2.bottom
+    );
+  }
+
   useEffect(() => {
     snowEffect = {
       el: canvasRef.current,
@@ -109,12 +121,6 @@ const App = () => {
     gameRef.current.style.transform = "translateY(-100%)";
   };
 
-  const resetGame = () => {
-    setSectionIndex(0);
-    heroRef.current.style.transform = "translateY(0)";
-    gameRef.current.style.transform = "translateY(0)";
-  };
-
   useEffect(() => {
     const handleKeyPress = (event) => {
       const movementMap = {
@@ -164,6 +170,72 @@ const App = () => {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, [curCharIndex]);
+
+  const [points, setPoints] = useState(0);
+  const vendingRef = useRef(null);
+  const starRef = useRef(null);
+  const [animateVending, setAnimateVending] = useState(true);
+  const keyDownTimeRef = useRef(null);
+
+  const handleStarStart = (event) => {
+    if (
+      event.key === "ArrowUp" &&
+      areElementsIntersecting(vendingRef.current, charRef.current) &&
+      !keyDownTimeRef.current
+    )
+      keyDownTimeRef.current = Date.now();
+  };
+
+  const handleStarEnd = (event) => {
+    if (
+      event.key === "ArrowUp" &&
+      areElementsIntersecting(vendingRef.current, charRef.current) &&
+      keyDownTimeRef.current
+    ) {
+      const duration = Date.now() - keyDownTimeRef.current;
+      keyDownTimeRef.current = null;
+
+      if (duration >= 2000) {
+        starRef.current.style.display = "block";
+        setAnimateVending(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleStarStart);
+    window.addEventListener("keyup", handleStarEnd);
+
+    return () => {
+      window.removeEventListener("keydown", handleStarStart);
+      window.removeEventListener("keyup", handleStarEnd);
+    };
+  }, [keyDownTimeRef]);
+
+  const handleStarCollect = (event) => {
+    const display = starRef.current.style.display;
+    if (
+      areElementsIntersecting(starRef.current, charRef.current) &&
+      display === "block"
+    ) {
+      starRef.current.style.display = "none";
+      setPoints(points + 1);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleStarCollect);
+
+    return () => {
+      window.removeEventListener("keydown", handleStarCollect);
+    };
+  }, []);
+
+  const resetGame = () => {
+    setSectionIndex(0);
+    heroRef.current.style.transform = "translateY(0)";
+    gameRef.current.style.transform = "translateY(0)";
+  };
 
   return (
     <>
@@ -293,6 +365,18 @@ const App = () => {
                 src="/t9.png"
                 alt="game character"
               />
+            </div>
+            <div className={`vending`} ref={vendingRef}>
+              <img
+                src="/vending.png"
+                className={animateVending ? "animate" : ""}
+              />
+              <div
+                className={`star ${animateVending ? "" : "star__animate"}`}
+                ref={starRef}
+              >
+                <img src="/star.png" />
+              </div>
             </div>
           </div>
         </section>
