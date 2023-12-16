@@ -128,7 +128,7 @@ canvas {
 
 .game__char {
   position: absolute;
-  bottom: -3%;
+  bottom: -5%;
   right: 0;
   height: 20rem;
   width: 20rem;
@@ -152,6 +152,7 @@ canvas {
   position: absolute;
   bottom: 1rem;
   left: 13.25rem;
+  /* background-color: cadetblue; */
 }
 
 .vending > img {

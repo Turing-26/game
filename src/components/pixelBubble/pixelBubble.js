@@ -1,11 +1,12 @@
 import React from "react";
-import "./pixelatedButton.css";
+import "./pixelBubble.css";
 
-const PixelBubble = ({ onClick, type, children }) => {
+const PixelBubble = ({ type, direction, style, refer, children }) => {
   return (
     <div
-      className={type === "large" ? `` : "eightbit-btn"}
-      onClick={onClick}
+      style={style}
+      className={`bubble grow ${type} ${direction}`}
+      ref={refer}
     >
       {children}
     </div>

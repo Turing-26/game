@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import PixelatedButton from "./components/pixelatedButton/pixelatedButton";
+import PixelBubble from "./components/pixelBubble/pixelBubble";
 import "./App.css";
 
 const App = () => {
@@ -114,6 +115,9 @@ const App = () => {
   const [curCharIndex, setCurCharIndex] = useState(0);
   const gameAreaRef = useRef(null);
   const charRef = useRef(null);
+  const charSpeechRef = useRef(null);
+  const [displayedText, setDisplayedText] = useState("");
+  const [anim1, setAnim1] = useState(false);
 
   const handleTranslate = () => {
     setSectionIndex((sectionIndex + 1) % 2);
@@ -223,13 +227,54 @@ const App = () => {
     }
   };
 
+  const typeText = async (text) => {
+    for (let i = 0; i < text.length; i++) {
+      setDisplayedText((prevText) => prevText + text[i]);
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+  };
+
+  const vendingSpeechTrigger = async () => {
+    if (
+      areElementsIntersecting(vendingRef.current, charRef.current) &&
+      points === 0 &&
+      !anim1
+    ) {
+      console.log(true);
+      const speech = charSpeechRef.current;
+      speech.style.display = "block";
+      setAnim1(true);
+      await typeText("Why is this vending machine moving???");
+      await setTimeout(async () => {
+        console.log("Wait half a second");
+        setDisplayedText("");
+        await typeText("AND WHY IS THERE A CAT INSIDEE!!!");
+        await setTimeout(async () => {
+          console.log("Wait half a second");
+          setDisplayedText("");
+          speech.style.display = "none";
+        }, 1000);
+      }, 1000);
+    }
+  };
+
   useEffect(() => {
     window.addEventListener("keydown", handleStarCollect);
+    // window.addEventListener("keydown", vendingSpeechTrigger);
 
     return () => {
       window.removeEventListener("keydown", handleStarCollect);
+      // window.removeEventListener("keydown", vendingSpeechTrigger);
     };
-  }, []);
+  }, [points]);
+
+  useEffect(() => {
+    window.addEventListener("keydown", vendingSpeechTrigger);
+
+    return () => {
+      window.removeEventListener("keydown", vendingSpeechTrigger);
+    };
+  }, [anim1, points]);
 
   const resetGame = () => {
     setSectionIndex(0);
@@ -237,6 +282,7 @@ const App = () => {
     gameRef.current.style.transform = "translateY(0)";
   };
 
+  // console.log(points);
   return (
     <>
       <canvas
@@ -269,6 +315,18 @@ const App = () => {
           <div className="game" ref={gameAreaRef}>
             <img src="/bg.png" alt="game backgropund" />
             <div className="game__char" ref={charRef}>
+              <PixelBubble
+                style={{
+                  position: "absolute",
+                  bottom: "14rem",
+                  display: "none",
+                }}
+                type={"mini"}
+                direction={"bottom"}
+                refer={charSpeechRef}
+              >
+                {displayedText}
+              </PixelBubble>
               <img
                 ref={forwardImgRefs[0]}
                 className="game__char--root"
