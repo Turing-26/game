@@ -154,14 +154,14 @@ const App = () => {
         ) {
           const currentLeft =
             parseInt(window.getComputedStyle(charRef.current).left, 10) || 0;
-          charRef.current.style.left = `${currentLeft - 10}px`;
+          charRef.current.style.left = `${currentLeft - 15}px`;
         } else if (
           event.key === "ArrowRight" &&
           isChildInsideParent(charRef.current, gameAreaRef.current)
         ) {
           const currentLeft =
             parseInt(window.getComputedStyle(charRef.current).left, 10) || 0;
-          charRef.current.style.left = `${currentLeft + 10}px`;
+          charRef.current.style.left = `${currentLeft + 15}px`;
         }
 
         setCurCharIndex((curCharIndex + 1) % 4);
@@ -230,7 +230,7 @@ const App = () => {
   const typeText = async (text) => {
     for (let i = 0; i < text.length; i++) {
       setDisplayedText((prevText) => prevText + text[i]);
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 30));
     }
   };
 
@@ -253,8 +253,8 @@ const App = () => {
           console.log("Wait half a second");
           setDisplayedText("");
           speech.style.display = "none";
-        }, 1000);
-      }, 1000);
+        }, 1200);
+      }, 1200);
     }
   };
 
@@ -280,6 +280,7 @@ const App = () => {
     setSectionIndex(0);
     heroRef.current.style.transform = "translateY(0)";
     gameRef.current.style.transform = "translateY(0)";
+    setPoints(0);
   };
 
   // console.log(points);
@@ -311,17 +312,18 @@ const App = () => {
           }`}
           ref={gameRef}
         >
-          <h1>Hello</h1>
+          {/* <h1>Hello</h1> */}
           <div className="game" ref={gameAreaRef}>
             <img src="/bg.png" alt="game backgropund" />
             <div className="game__char" ref={charRef}>
               <PixelBubble
                 style={{
                   position: "absolute",
-                  bottom: "14rem",
+                  bottom: "18rem",
+                  left: "3rem",
                   display: "none",
                 }}
-                type={"mini"}
+                type={"medium"}
                 direction={"bottom"}
                 refer={charSpeechRef}
               >
