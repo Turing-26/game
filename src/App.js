@@ -30,6 +30,12 @@ const App = () => {
     );
   }
 
+  const delay = (ms) => {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), ms);
+    });
+  };
+
   useEffect(() => {
     snowEffect = {
       el: canvasRef.current,
@@ -245,16 +251,12 @@ const App = () => {
       speech.style.display = "block";
       setAnim1(true);
       await typeText("Why is this vending machine moving???");
-      await setTimeout(async () => {
-        console.log("Wait half a second");
-        setDisplayedText("");
-        await typeText("AND WHY IS THERE A CAT INSIDEE!!!");
-        await setTimeout(async () => {
-          console.log("Wait half a second");
-          setDisplayedText("");
-          speech.style.display = "none";
-        }, 1200);
-      }, 1200);
+      await delay(1200);
+      setDisplayedText("");
+      await typeText("AND WHY IS THERE A CAT INSIDEE!!!");
+      await delay(1200);
+      setDisplayedText("");
+      speech.style.display = "none";
     }
   };
 
