@@ -233,7 +233,7 @@ const App = () => {
     }
   };
 
-  const typeText = async (text) => {
+  const typeText = async (text, setDisplayedText) => {
     for (let i = 0; i < text.length; i++) {
       setDisplayedText((prevText) => prevText + text[i]);
       await new Promise((resolve) => setTimeout(resolve, 30));
@@ -246,14 +246,14 @@ const App = () => {
       points === 0 &&
       !anim1
     ) {
-      console.log(true);
+      // console.log(true);
       const speech = charSpeechRef.current;
       speech.style.display = "block";
       setAnim1(true);
-      await typeText("Why is this vending machine moving???");
+      await typeText("Why is this vending machine moving???", setDisplayedText);
       await delay(1200);
       setDisplayedText("");
-      await typeText("AND WHY IS THERE A CAT INSIDEE!!!");
+      await typeText("AND WHY IS THERE A CAT INSIDEE!!!", setDisplayedText);
       await delay(1200);
       setDisplayedText("");
       speech.style.display = "none";
@@ -278,14 +278,87 @@ const App = () => {
     };
   }, [anim1, points]);
 
-  const resetGame = () => {
-    setSectionIndex(0);
-    heroRef.current.style.transform = "translateY(0)";
-    gameRef.current.style.transform = "translateY(0)";
-    setPoints(0);
+  const catSpeechRef = useRef(null);
+  const [catText, setCatText] = useState("");
+  const [anim2, setAnim2] = useState(false);
+
+  const handleCat = async () => {
+    if (
+      // areElementsIntersecting(catSpeechRef.current, charRef.current) &&
+      points === 1 &&
+      !anim2
+    ) {
+      setAnim2(true);
+      const speech = catSpeechRef.current;
+      speech.style.display = "block";
+      await typeText("Hmmmm......", setCatText);
+      await delay(1200);
+      setCatText("");
+      await typeText("I see you just picked up that star", setCatText);
+      await delay(1200);
+      setCatText("");
+      await typeText(
+        `Try coming here and throwing that star up (PRESS 'Q'), maybe it will work for you, idk...`,
+        setCatText
+      );
+      await delay(1500);
+      setCatText("");
+      speech.style.opacity = "0";
+    }
   };
 
-  // console.log(points);
+  useEffect(() => {
+    // console.log("hello");
+    window.addEventListener("keydown", handleCat);
+
+    return () => {
+      window.removeEventListener("keydown", handleCat);
+    };
+  }, [anim2, points]);
+
+  const [anim3, setAnim3] = useState(false);
+
+  useEffect(() => {
+    // console.log("hello1");
+    const handleThrow = async (event) => {
+      if (
+        event.key === "q" &&
+        areElementsIntersecting(catSpeechRef.current, charRef.current) &&
+        points === 1 &&
+        !anim3
+      ) {
+        // console.log("YES");
+        setAnim3(true);
+        // setPoints((prev) => prev - 1);
+        const char = charRef.current;
+
+        char.style.transform = "translateY(-10px)";
+        await delay(200);
+        char.style.transform = "translateY(0)";
+      }
+    };
+
+    window.addEventListener("keydown", handleThrow);
+
+    return () => {
+      window.removeEventListener("keydown", handleThrow);
+    };
+  }, [anim3, points]);
+
+  const resetGame = () => {
+    heroRef.current.style.transform = "translateY(0)";
+    gameRef.current.style.transform = "translateY(0)";
+
+    setSectionIndex(0);
+    setAnimateVending(true);
+    setPoints(0);
+    setCurCharIndex(0);
+    setAnim1(false);
+    setAnim2(false);
+    setAnim3(false);
+  };
+
+  console.log(points);
   return (
     <>
       <canvas
@@ -317,6 +390,18 @@ const App = () => {
           {/* <h1>Hello</h1> */}
           <div className="game" ref={gameAreaRef}>
             <img src="/bg.png" alt="game backgropund" />
+            <div className="cat__area">
+              <PixelBubble
+                style={{
+                  display: "none",
+                }}
+                type={"medium"}
+                direction={"bottom"}
+                refer={catSpeechRef}
+              >
+                {catText}
+              </PixelBubble>
+            </div>
             <div className="game__char" ref={charRef}>
               <PixelBubble
                 style={{
