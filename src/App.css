@@ -155,11 +155,11 @@ canvas {
 }
 
 .vending {
-  height: 25rem;
-  width: auto;
+  height: auto;
+  width: 10%;
   position: absolute;
-  bottom: 1.75rem;
-  left: 18.75rem;
+  bottom: 1.25%;
+  left: 10.5%;
   /* background-color: cadetblue; */
 }
 
@@ -182,7 +182,18 @@ canvas {
   /* background-color: #ffe600; */
 }
 
-.star > img {
+.star__char {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  height: 7rem;
+  width: 7rem;
+  opacity: 0;
+}
+
+.star > img,
+.star__char img {
   height: 80%;
   width: auto;
 }
@@ -190,6 +201,12 @@ canvas {
 .star__animate {
   animation: throw 0.5s ease;
   transform: translateX(240px);
+}
+
+.star__animate--2 {
+  opacity: 1;
+  animation: rotate 2s linear infinite, ascend 1s ease;
+  transform: translateX(-50%) translateY(-300%);
 }
 
 .cat__area {
@@ -230,5 +247,42 @@ canvas {
   }
   100% {
     transform: translateX(240px) translateY(0);
+  }
+}
+
+@keyframes ascend {
+  0% {
+    /* display: block; */
+    opacity: 0.2;
+    transform: translateX(-50%) translateY(-55%);
+  }
+  20% {
+    opacity: 0.4;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  40% {
+    opacity: 0.6;
+    transform: translateX(-50%) translateY(-170%);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(-210%);
+  }
+  80% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-270%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-300%);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: translateX(-50%) translateY(-300%) rotateY(0deg);
+  }
+  to {
+    transform: translateX(-50%) translateY(-300%) rotateY(360deg);
   }
 }

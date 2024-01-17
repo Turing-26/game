@@ -106,6 +106,27 @@ const App = () => {
     };
   }, []);
 
+  // const audioRef = useRef(new Audio("/sounds/Indoor.mp3"));
+  // // const [backgroundPlaying, setBackgroundPlaying] = useState(true);
+
+  // useEffect(() => {
+  //   const playAudio = async () => {
+  //     try {
+  //       audioRef.current.loop = true;
+  //       await audioRef.current.play();
+  //     } catch (error) {
+  //       console.log("Audio not allowed");
+  //       alert("Please allow audio and reload");
+  //     }
+  //   };
+
+  //   playAudio();
+  //   return () => {
+  //     // audio.pause();
+  //     audioRef.current.currentTime = 0;
+  //   };
+  // }, [audioRef]);
+
   const heroRef = useRef(null);
   const gameRef = useRef(null);
   const [sectionIndex, setSectionIndex] = useState(0);
@@ -333,6 +354,7 @@ const App = () => {
         const char = charRef.current;
 
         char.style.transform = "translateY(-10px)";
+        // starRef.current.classList.add("star__animation--2");
         await delay(200);
         char.style.transform = "translateY(0)";
       }
@@ -343,7 +365,7 @@ const App = () => {
     return () => {
       window.removeEventListener("keydown", handleThrow);
     };
-  }, [anim3, points]);
+  }, [anim3, points, starRef]);
 
   const resetGame = () => {
     heroRef.current.style.transform = "translateY(0)";
@@ -416,6 +438,14 @@ const App = () => {
               >
                 {displayedText}
               </PixelBubble>
+              {points === 1 && (
+                <div
+                  className={`star__char ${anim3 ? "star__animate--2" : ""}`}
+                  ref={starRef}
+                >
+                  <img src="/star.png" />
+                </div>
+              )}
               <img
                 ref={forwardImgRefs[0]}
                 className="game__char--root"
@@ -518,12 +548,14 @@ const App = () => {
                 src="/vending.png"
                 className={animateVending ? "animate" : ""}
               />
-              <div
-                className={`star ${animateVending ? "" : "star__animate"}`}
-                ref={starRef}
-              >
-                <img src="/star.png" />
-              </div>
+              {points === 0 && (
+                <div
+                  className={`star ${animateVending ? "" : "star__animate"}`}
+                  ref={starRef}
+                >
+                  <img src="/star.png" />
+                </div>
+              )}
             </div>
           </div>
         </section>
